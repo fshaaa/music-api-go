@@ -3,7 +3,7 @@ package songController
 import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
-	"music-api-go/repository/songRepository"
+	"music-api-go/usecase"
 	"music-api-go/utilities"
 	"net/http"
 	"time"
@@ -12,17 +12,15 @@ import (
 type SongController interface{}
 
 type songController struct {
-	songRepo songRepository.SongRepository
+	song usecase.SongUsecase
 }
 
-func NewSongController(songRepo songRepository.SongRepository) *songController {
-	return &songController{songRepo}
+func NewSongController(song usecase.SongUsecase) *songController {
+	return &songController{song}
 }
 
 func (s *songController) GetAllSongs(c echo.Context) error {
-	var songs []model.Songs
-
-	songs, err := s.songRepo.GetAllSongs()
+	songs, err := s.song.GetAllSongs()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -34,8 +32,7 @@ func (s *songController) GetAllSongs(c echo.Context) error {
 
 func (s *songController) GetSongById(c echo.Context) error {
 	id := c.Param("id")
-
-	song, err := s.songRepo.GetSongById(id)
+	song, err := s.song.GetSongByID(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -51,8 +48,7 @@ func (s *songController) AddSong(c echo.Context) error {
 	song.ID = utilities.CreateUUID()
 	song.CreatedAt = time.Now().Format(time.RFC1123Z)
 	song.UpdatedAt = song.CreatedAt
-
-	err := s.songRepo.AddSong(song)
+	err := s.song.AddSong(song)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -67,12 +63,10 @@ func (s *songController) UpdateSong(c echo.Context) error {
 	var song model.Songs
 	c.Bind(&song)
 	song.UpdatedAt = time.Now().Format(time.RFC1123Z)
-
-	res, err := s.songRepo.UpdateSong(id, song)
+	res, err := s.song.UpdateSong(id, song)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "success update song",
 		"id song": id,
@@ -82,12 +76,23 @@ func (s *songController) UpdateSong(c echo.Context) error {
 
 func (s *songController) DeleteSong(c echo.Context) error {
 	id := c.Param("id")
-
-	err := s.songRepo.DeleteSong(id)
+	err := s.song.DeleteSong(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "success delete song",
+	})
+}
+
+func (s *songController) SearchSong(c echo.Context) error {
+	title := c.QueryParam("title")
+	songs, err := s.song.SearchSong(title)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "search song by tittle",
+		"songs":   songs,
 	})
 }

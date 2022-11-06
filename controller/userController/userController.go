@@ -1,10 +1,10 @@
-package controller
+package userController
 
 import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/repository/userRepository"
+	"music-api-go/usecase"
 	"music-api-go/utilities"
 	"net/http"
 	"time"
@@ -13,17 +13,17 @@ import (
 type UserController interface{}
 
 type userController struct {
-	userRepo userRepository.UserRepository
+	user usecase.UserUsecase
 }
 
-func NewUserController(uRepo userRepository.UserRepository) *userController {
-	return &userController{uRepo}
+func NewUserController(user usecase.UserUsecase) *userController {
+	return &userController{user}
 }
 
 func (u *userController) GetUserById(c echo.Context) error {
 	id := c.Param("id")
 
-	user, err := u.userRepo.GetUserById(id)
+	user, err := u.user.GetUserById(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -40,14 +40,13 @@ func (u *userController) CreateUser(c echo.Context) error {
 	user.CreatedAt = time.Now().Format(time.RFC1123Z)
 	user.UpdatedAt = user.CreatedAt
 
-	err := u.userRepo.CreateUser(user)
+	err := u.user.CreateUser(user)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "success create user",
-		"user":    user,
 	})
 }
 
@@ -55,7 +54,7 @@ func (u *userController) LoginUser(c echo.Context) error {
 	var req model.Users
 	c.Bind(&req)
 
-	user, err := u.userRepo.LoginUser(req)
+	user, err := u.user.LoginUser(req)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err.Error())
 	}
@@ -82,7 +81,7 @@ func (u *userController) UpdateUser(c echo.Context) error {
 	c.Bind(&req)
 	req.UpdatedAt = time.Now().Format(time.RFC1123Z)
 
-	user, err := u.userRepo.UpdateUser(id, req)
+	user, err := u.user.UpdateUser(id, req)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -96,7 +95,7 @@ func (u *userController) UpdateUser(c echo.Context) error {
 func (u *userController) DeleteUser(c echo.Context) error {
 	id := c.Param("id")
 
-	err := u.userRepo.DeleteUser(id)
+	err := u.user.DeleteUser(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -105,11 +104,11 @@ func (u *userController) DeleteUser(c echo.Context) error {
 	})
 }
 
-func (u userController) SearchUser(c echo.Context) error {
+func (u *userController) SearchUser(c echo.Context) error {
 	var users []dto.User
-	name := c.QueryParam("username")
+	name := c.QueryParam("name")
 
-	users, err := u.userRepo.SearchUser(name)
+	users, err := u.user.SearchUser(name)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

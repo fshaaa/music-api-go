@@ -6,12 +6,53 @@ import (
 )
 
 type PlaylistSongsRepository interface {
+	GetAllSongID(playlist_id string) ([]string, error)
+	GetDurationPlaylist(playlist_id string) (int, error)
 	AddSongInPlaylist(playlist model.PlaylistSongs) error
-	DeleteSongInPlaylist(playlist model.PlaylistSongs) error
+	DeleteSongInPlaylist(song_id, playlist_id string) error
 }
 
 type playlistSongsRepository struct {
 	db *sql.DB
+}
+
+func NewPlaylistSongsRepository(db *sql.DB) *playlistSongsRepository {
+	return &playlistSongsRepository{db}
+}
+
+func (p *playlistSongsRepository) GetAllSongID(playlist_id string) ([]string, error) {
+	var song_id []string
+	query := `SELECT song_id FROM playlist_song WHERE playlist_id = $1`
+	row, err := p.db.Query(query, playlist_id)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var id string
+		err = row.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		song_id = append(song_id, id)
+	}
+	return song_id, nil
+}
+
+func (p *playlistSongsRepository) GetDurationPlaylist(playlist_id string) (int, error) {
+	query := `SELECT SUM(duration) FROM songs s, playlist_songs p WHERE p.playlist_id = $1 AND
+				s.id = p.song_id`
+	row, err := p.db.Query(query, playlist_id)
+	if err != nil {
+		return 0, err
+	}
+	var totalTime = 0
+	for row.Next() {
+		err = row.Scan(totalTime)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return totalTime, nil
 }
 
 func (p *playlistSongsRepository) AddSongInPlaylist(playlist model.PlaylistSongs) error {

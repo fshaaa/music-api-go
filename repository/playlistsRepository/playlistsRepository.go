@@ -57,7 +57,7 @@ func (p *playlistsRepository) GetPlaylist(id string) (model.Playlists, error) {
 	return playlist, nil
 }
 
-func (p playlistsRepository) AddPlaylist(playlist model.Playlists) error {
+func (p *playlistsRepository) AddPlaylist(playlist model.Playlists) error {
 	query := `INSERT INTO playlists VALUES($1,$2,$3,$4,$5)`
 	_, err := p.db.Exec(query, playlist.ID, playlist.CreatedAt, playlist.UpdatedAt, playlist.Name, playlist.ID)
 	if err != nil {

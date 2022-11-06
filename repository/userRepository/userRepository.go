@@ -2,7 +2,6 @@ package userRepository
 
 import (
 	"database/sql"
-	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
 )
@@ -11,7 +10,7 @@ type UserRepository interface {
 	CreateUser(user model.Users) error
 	LoginUser(user model.Users) (model.Users, error)
 	GetUserById(id string) (model.Users, error)
-	UpdateUser(id string, user model.Users) (model.Users, error)
+	UpdateUser(id, key string, value any) error
 	DeleteUser(id string) error
 	SearchUser(name string) ([]dto.User, error)
 }
@@ -65,29 +64,13 @@ func (u *userRepository) GetUserById(id string) (model.Users, error) {
 	return userRes, nil
 }
 
-func (u *userRepository) UpdateUser(id string, user model.Users) (model.Users, error) {
-	var userRes model.Users
-	request := map[string]interface{}{
-		"username": user.Username,
-		"email":    user.Email,
-		"fullname": user.Fullname,
-	}
+func (u *userRepository) UpdateUser(id, key string, value any) error {
 	query := `UPDATE users SET $1 = $2 WHERE id = $3`
-	u.db.Exec(query, "created_at", user.CreatedAt, id)
-	for key, value := range request {
-		if value != nil {
-			_, err := u.db.Exec(query, key, value, id)
-			if err != nil {
-				return userRes, err
-			}
-			fmt.Println(key, value)
-		}
-	}
-	userRes, err := u.GetUserById(id)
+	_, err := u.db.Exec(query, key, value, id)
 	if err != nil {
-		return userRes, err
+		return err
 	}
-	return userRes, nil
+	return nil
 }
 
 func (u *userRepository) DeleteUser(id string) error {
@@ -101,7 +84,8 @@ func (u *userRepository) DeleteUser(id string) error {
 
 func (u *userRepository) SearchUser(name string) ([]dto.User, error) {
 	var users []dto.User
-	query := `SELECT username, email FROM users WHERE (username LIKE $1% OR email LIKE $2%) LIMIT 10`
+	query := `SELECT id, username, email, fullname FROM users WHERE (username LIKE '%' || $1 || '%' OR
+        email LIKE '%' || $2 || '%') LIMIT 10`
 	row, err := u.db.Query(query, name, name)
 	if err != nil {
 		return nil, err
@@ -109,7 +93,7 @@ func (u *userRepository) SearchUser(name string) ([]dto.User, error) {
 	defer row.Close()
 	for row.Next() {
 		var user dto.User
-		err = row.Scan(&user.Username, &user.Email)
+		err = row.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname)
 		if err != nil {
 			return nil, err
 		}

@@ -40,22 +40,22 @@ func (a *albumRepository) GetAllAlbums() ([]model.Albums, error) {
 	return albums, nil
 }
 
-func (a *albumRepository) GetAlbum(id string) error {
+func (a *albumRepository) GetAlbum(id string) (model.Albums, error) {
 	var album model.Albums
 	query := `SELECT * FROM albums WHERE id = $1`
 
 	row, err := a.db.Query(query, id)
 	if err != nil {
-		return err
+		return model.Albums{}, err
 	}
 
 	for row.Next() {
 		err = row.Scan(&album.ID, &album.CreatedAt, &album.UpdatedAt, &album.Name, &album.Year, &album.Owner)
 		if err != nil {
-			return err
+			return model.Albums{}, err
 		}
 	}
-	return nil
+	return album, nil
 }
 
 func (a *albumRepository) AddAlbum(album model.Albums) error {
