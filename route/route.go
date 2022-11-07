@@ -6,6 +6,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"music-api-go/config"
 	"music-api-go/controller/albumController"
+	"music-api-go/controller/albumLikeController"
+	"music-api-go/controller/collaborationController"
+	"music-api-go/controller/playlistActivityController"
 	"music-api-go/controller/playlistController"
 	"music-api-go/controller/playlistSongController"
 	"music-api-go/controller/songController"
@@ -13,6 +16,7 @@ import (
 	"music-api-go/repository/albumLikesRepository"
 	"music-api-go/repository/albumRepository"
 	"music-api-go/repository/collaborationsRepository"
+	"music-api-go/repository/playlistActivitiesRepository"
 	"music-api-go/repository/playlistSongsRepository"
 	"music-api-go/repository/playlistsRepository"
 	"music-api-go/repository/songRepository"
@@ -27,6 +31,7 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	collabRepo := collaborationsRepository.NewCollaborationRepository(db)
 	playlistRepo := playlistsRepository.NewPlaylistRepository(db)
 	playSongRepo := playlistSongsRepository.NewPlaylistSongsRepository(db)
+	playActiv := playlistActivitiesRepository.NewPlaylistActivitiesRepository(db)
 	songRepo := songRepository.NewSongRepository(db)
 	userRepo := userRepository.NewUserRepository(db)
 
@@ -81,8 +86,32 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	playSongUc := usecase.NewPlaylistSongUsecase(playSongRepo)
 	playSongControl := playlistSongController.NewPlaylistSongController(playSongUc)
 
-	appPlaylistSong := e.Group("/playlist-song")
+	appPlaylistSong := appPlaylist.Group("/songs")
 	appPlaylistSong.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appPlaylistSong.POST("", playSongControl.AddPlaylistSong)
 	appPlaylistSong.DELETE("", playSongControl.DeletePlaylistSong)
+
+	collabUc := usecase.NewCollabUsecase(collabRepo)
+	collabControl := collaborationController.NewCollabRepository(collabUc)
+
+	appColab := appUser.Group("/collabs")
+	appColab.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
+	appColab.POST("", collabControl.AddCollaboration)
+	appColab.DELETE("", collabControl.DeleteCollaboration)
+
+	albumlikeUc := usecase.NewAlbumLikeUsecase(albumLikeRepo)
+	albumLikeControl := albumLikeController.NewAlbumLikeController(albumlikeUc)
+
+	appAlbumLike := appAlbum.Group("/like")
+	appAlbumLike.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
+	appAlbumLike.POST("", albumLikeControl.AddAlbumLike)
+	appAlbumLike.DELETE("", albumLikeControl.DeleteAlbumLike)
+
+	playActivUc := usecase.PlaylistActivityUsecase(playActiv)
+	playActivControl := playlistActivityController.NewPlaylistActivityController(playActivUc)
+
+	appPlayActiv := appPlaylist.Group("/status")
+	appPlayActiv.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
+	appPlayActiv.POST("", playActivControl.AddPlaylistActivity)
+	appPlayActiv.DELETE("", playActivControl.DeletePlaylistActivity)
 }
