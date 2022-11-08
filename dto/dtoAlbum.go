@@ -20,7 +20,7 @@ type AlbumDetail struct {
 	Song          []Song `json:"song"`
 }
 
-func TransformAlbum(src model.Albums, dest Album) {
+func TransformAlbum(src *model.Albums, dest *Album) {
 	dest.ID = src.ID
 	dest.Name = src.Name
 	dest.Year = src.Year

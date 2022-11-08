@@ -41,7 +41,7 @@ func (s *songUsecase) GetAllSongsInPlaylist(playlist_id string) ([]dto.Song, int
 		if err != nil {
 			return nil, 0, 0, err
 		}
-		dto.TransformSong(songModel, song)
+		dto.TransformSong(&songModel, &song)
 		songs = append(songs, song)
 		totalSong++
 		totalDuration += song.Duration
@@ -57,7 +57,7 @@ func (s *songUsecase) GetAllSongs() ([]dto.Song, error) {
 	}
 	for _, songModel := range songsModel {
 		var song dto.Song
-		dto.TransformSong(songModel, song)
+		dto.TransformSong(&songModel, &song)
 		songs = append(songs, song)
 	}
 	return songs, nil
@@ -69,7 +69,7 @@ func (s *songUsecase) GetSongByID(id string) (dto.Song, error) {
 	if err != nil {
 		return dto.Song{}, err
 	}
-	dto.TransformSong(songModel, song)
+	dto.TransformSong(&songModel, &song)
 	return song, nil
 }
 
@@ -109,7 +109,7 @@ func (s *songUsecase) SearchSong(title string) ([]dto.Song, error) {
 	}
 	for _, songModel := range songsModel {
 		var song dto.Song
-		dto.TransformSong(songModel, song)
+		dto.TransformSong(&songModel, &song)
 		songs = append(songs, song)
 	}
 	return songs, nil

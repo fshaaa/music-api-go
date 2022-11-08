@@ -2,6 +2,7 @@ package userRepository
 
 import (
 	"database/sql"
+	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
 )
@@ -10,7 +11,7 @@ type UserRepository interface {
 	CreateUser(user model.Users) error
 	LoginUser(user model.Users) (model.Users, error)
 	GetUserById(id string) (model.Users, error)
-	UpdateUser(id, key string, value any) error
+	UpdateUser(id, key, value string) error
 	DeleteUser(id string) error
 	SearchUser(name string) ([]dto.User, error)
 }
@@ -44,6 +45,7 @@ func (u *userRepository) LoginUser(user model.Users) (model.Users, error) {
 	if err != nil {
 		return userRes, err
 	}
+	fmt.Println(userRes, "di repo")
 	return userRes, nil
 }
 
@@ -64,8 +66,8 @@ func (u *userRepository) GetUserById(id string) (model.Users, error) {
 	return userRes, nil
 }
 
-func (u *userRepository) UpdateUser(id, key string, value any) error {
-	query := `UPDATE users SET $1 = $2 WHERE id = $3`
+func (u *userRepository) UpdateUser(id, key, value string) error {
+	query := `UPDATE users SET "$1" = $2 WHERE id = $3`
 	_, err := u.db.Exec(query, key, value, id)
 	if err != nil {
 		return err

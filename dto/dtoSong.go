@@ -11,7 +11,7 @@ type Song struct {
 	Duration  int    `json:"duration"`
 }
 
-func TransformSong(src model.Songs, dest Song) {
+func TransformSong(src *model.Songs, dest *Song) {
 	dest.ID = src.ID
 	dest.Title = src.Title
 	dest.Year = src.Year

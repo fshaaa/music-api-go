@@ -22,13 +22,13 @@ type PlaylistDetail struct {
 	Song          []Song `json:"song"`
 }
 
-func TransformPlaylist(src model.Playlists, dest Playlist) {
+func TransformPlaylist(src *model.Playlists, dest *Playlist) {
 	dest.ID = src.ID
 	dest.Name = src.Name
 	dest.Owner = src.User_id
 }
 
-func TransformPlaylistDetail(src model.Playlists, dest PlaylistDetail) {
+func TransformPlaylistDetail(src *model.Playlists, dest *PlaylistDetail) {
 	dest.ID = src.ID
 	dest.Name = src.Name
 	dest.Owner = src.User_id

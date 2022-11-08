@@ -43,7 +43,7 @@ func (p *playlistUsecase) GetAllPlaylists() ([]dto.Playlist, error) {
 	}
 	for _, playlistModel := range playlistsModel {
 		var playlist dto.Playlist
-		dto.TransformPlaylist(playlistModel, playlist)
+		dto.TransformPlaylist(&playlistModel, &playlist)
 		_, playlist.TotalSong, playlist.TotalDuration, err = p.songUC.GetAllSongsInPlaylist(playlist.ID)
 		_, playlist.TotalUser, err = p.userUC.GetAllUsersInPlaylist(playlist.ID)
 		playlists = append(playlists, playlist)
@@ -57,7 +57,7 @@ func (p *playlistUsecase) GetPlaylistByID(id string) (dto.Playlist, error) {
 	if err != nil {
 		return dto.Playlist{}, err
 	}
-	dto.TransformPlaylist(playlistModel, playlist)
+	dto.TransformPlaylist(&playlistModel, &playlist)
 	return playlist, nil
 }
 
@@ -67,7 +67,7 @@ func (p *playlistUsecase) GetPlaylistDetail(id string) (dto.PlaylistDetail, erro
 	if err != nil {
 		return dto.PlaylistDetail{}, err
 	}
-	dto.TransformPlaylistDetail(playlistModel, playlist)
+	dto.TransformPlaylistDetail(&playlistModel, &playlist)
 	playlist.Song, playlist.TotalSong, playlist.TotalDuration, err = p.songUC.GetAllSongsInPlaylist(id)
 	if err != nil {
 		return dto.PlaylistDetail{}, err

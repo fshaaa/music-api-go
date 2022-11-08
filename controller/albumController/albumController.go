@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
 	"music-api-go/usecase"
+	"music-api-go/utilities"
 	"net/http"
 	"time"
 )
@@ -44,6 +45,7 @@ func (a *albumController) GetAlbumByID(c echo.Context) error {
 func (a *albumController) AddAlbum(c echo.Context) error {
 	var album model.Albums
 	c.Bind(&album)
+	album.ID = utilities.CreateUUID()
 	album.CreatedAt = time.Now().Format(time.RFC1123Z)
 	album.UpdatedAt = album.UpdatedAt
 
@@ -83,7 +85,7 @@ func (a *albumController) GetAlbumDetail(c echo.Context) error {
 func (a *albumController) GetUsersLikeAlbum(c echo.Context) error {
 	id := c.Param("id")
 	album, err := a.album.GetAlbumByID(id)
-	users, totalLike, err := a.album.GetUserLikeAlbum(id)
+	users, totalLike, err := a.album.GetUsersLikeAlbum(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}

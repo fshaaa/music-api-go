@@ -1,6 +1,7 @@
 package userController
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"music-api-go/dto"
 	"music-api-go/model"
@@ -58,6 +59,7 @@ func (u *userController) LoginUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, err.Error())
 	}
+	fmt.Println(user)
 
 	token, err := utilities.CreateToken(user.Username, user.Email)
 	if err != nil {

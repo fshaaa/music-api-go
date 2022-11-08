@@ -35,7 +35,7 @@ func (a *albumUsecase) GetAllAlbums() ([]dto.Album, error) {
 	}
 	for _, albumModel := range albumsModel {
 		var album dto.Album
-		dto.TransformAlbum(albumModel, album)
+		dto.TransformAlbum(&albumModel, &album)
 		albums = append(albums, album)
 	}
 	return albums, nil
@@ -47,7 +47,7 @@ func (a *albumUsecase) GetAlbumByID(id string) (dto.Album, error) {
 	if err != nil {
 		return dto.Album{}, err
 	}
-	dto.TransformAlbum(albumModel, album)
+	dto.TransformAlbum(&albumModel, &album)
 	return album, nil
 }
 
