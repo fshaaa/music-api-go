@@ -86,7 +86,7 @@ func (s *songController) DeleteSong(c echo.Context) error {
 }
 
 func (s *songController) SearchSong(c echo.Context) error {
-	title := c.QueryParam("title")
+	title := c.QueryParam("name")
 	songs, err := s.song.SearchSong(title)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())

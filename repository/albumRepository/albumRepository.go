@@ -22,7 +22,7 @@ func NewAlbumRepository(db *sql.DB) *albumRepository {
 
 func (a *albumRepository) GetAllAlbums() ([]model.Albums, error) {
 	var albums []model.Albums
-	query := `SELECT * FORM albums LIMIT 10`
+	query := `SELECT * FROM albums LIMIT 10`
 
 	row, err := a.db.Query(query)
 	if err != nil {

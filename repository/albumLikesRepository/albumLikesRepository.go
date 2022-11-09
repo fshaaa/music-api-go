@@ -43,7 +43,7 @@ func (a *albumLikesRepository) DeleteAlbumLike(user_id, album_id string) error {
 func (a *albumLikesRepository) GetTotalAlbumLikes(album_id string) (int, error) {
 	var totalLikes = 0
 	query := `SELECT COUNT(user_id) FROM album_likes WHERE album_id = $1`
-	row, err := a.db.Query(query)
+	row, err := a.db.Query(query, album_id)
 	if err != nil {
 		return 0, err
 	}

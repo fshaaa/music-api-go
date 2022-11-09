@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
 	"music-api-go/repository/collaborationsRepository"
@@ -13,7 +12,7 @@ type UserUsecase interface {
 	CreateUser(user model.Users) error
 	LoginUser(user model.Users) (dto.User, error)
 	GetUserById(id string) (dto.User, error)
-	UpdateUser(id string, user model.Users) (map[string]string, error)
+	UpdateUser(id string, user model.Users) (map[string]interface{}, error)
 	DeleteUser(id string) error
 	SearchUser(name string) ([]dto.User, error)
 }
@@ -55,9 +54,7 @@ func (u *userUsecase) CreateUser(user model.Users) error {
 func (u *userUsecase) LoginUser(user model.Users) (dto.User, error) {
 	var DTOuser dto.User
 	userModel, err := u.user.LoginUser(user)
-	fmt.Println(userModel, "di uc sebelum tranform")
 	dto.TransformUser(&userModel, &DTOuser)
-	fmt.Println(DTOuser, "diuc")
 	return DTOuser, err
 }
 
@@ -68,21 +65,20 @@ func (u *userUsecase) GetUserById(id string) (dto.User, error) {
 	return DTOuser, err
 }
 
-func (u *userUsecase) UpdateUser(id string, user model.Users) (map[string]string, error) {
-	var res map[string]string
-	key := [...]string{"updated_at", "username", "email", "fullname"}
-	value := dto.CatchValue(user)
-	i := 0
-	for _, att := range value {
-		if att != "" {
-			err := u.user.UpdateUser(id, key[i], att)
-			if err != nil {
-				return nil, err
-			}
-			res[key[i]] = att
-		}
-		i++
+func (u *userUsecase) UpdateUser(id string, user model.Users) (map[string]interface{}, error) {
+	res := make(map[string]interface{})
+	req := map[string]interface{}{
+		"updated_at": user.UpdatedAt,
+		"username":   user.Username,
+		"email":      user.Email,
+		"fullname":   user.Fullname,
 	}
+	for key, value := range req {
+		if value != nil && value != 0 && value != "" {
+			res[key] = value
+		}
+	}
+	u.user.UpdateUser(id, res)
 	return res, nil
 }
 

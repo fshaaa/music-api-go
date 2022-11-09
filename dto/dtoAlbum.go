@@ -27,7 +27,7 @@ func TransformAlbum(src *model.Albums, dest *Album) {
 	dest.Owner = src.Owner
 }
 
-func TransformAlbumDetail(src model.Albums, dest AlbumDetail) {
+func TransformAlbumDetail(src *model.Albums, dest *AlbumDetail) {
 	dest.ID = src.ID
 	dest.Name = src.Name
 	dest.Year = src.Year

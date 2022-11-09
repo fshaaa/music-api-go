@@ -47,7 +47,7 @@ func (a *albumController) AddAlbum(c echo.Context) error {
 	c.Bind(&album)
 	album.ID = utilities.CreateUUID()
 	album.CreatedAt = time.Now().Format(time.RFC1123Z)
-	album.UpdatedAt = album.UpdatedAt
+	album.UpdatedAt = album.CreatedAt
 
 	err := a.album.AddAlbum(album)
 	if err != nil {

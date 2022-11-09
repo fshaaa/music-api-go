@@ -58,7 +58,8 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appSong.GET("/:id", songControl.GetSongById)
 	appSong.POST("", songControl.AddSong)
 	appSong.PUT("/:id", songControl.UpdateSong)
-	appSong.DELETE("/:id", userControl.DeleteUser)
+	appSong.DELETE("/:id", songControl.DeleteSong)
+	appSong.GET("/search", songControl.SearchSong)
 
 	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, songUc, userUc)
 	playlistCotrol := playlistController.NewPlaylistController(playlistUc)

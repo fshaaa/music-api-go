@@ -61,7 +61,8 @@ func (a *albumUsecase) DeleteAlbum(id string) error {
 
 func (a *albumUsecase) GetAlbumDetail(id string) (dto.AlbumDetail, error) {
 	var album dto.AlbumDetail
-	var err error
+	albumModel, err := a.album.GetAlbum(id)
+	dto.TransformAlbumDetail(&albumModel, &album)
 	album.TotalLike, err = a.albumLike.GetTotalAlbumLikes(id)
 	if err != nil {
 		return dto.AlbumDetail{}, err
