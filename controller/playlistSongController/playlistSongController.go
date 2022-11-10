@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
 	"music-api-go/usecase"
-	"music-api-go/utilities"
+	"music-api-go/util/uuid"
 	"net/http"
 	"time"
 )
@@ -22,7 +22,7 @@ func NewPlaylistSongController(ps usecase.PlaylistSongUsecase) *playlistSongCont
 func (p *playlistSongController) AddPlaylistSong(c echo.Context) error {
 	var playlistSong model.PlaylistSongs
 	c.Bind(&playlistSong)
-	playlistSong.ID = utilities.CreateUUID()
+	playlistSong.ID = uuid.CreateUUID()
 	playlistSong.CreatedAt = time.Now().Format(time.RFC1123Z)
 	playlistSong.UpdatedAt = playlistSong.CreatedAt
 

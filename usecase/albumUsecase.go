@@ -34,21 +34,17 @@ func (a *albumUsecase) GetAllAlbums() ([]dto.Album, error) {
 		return nil, err
 	}
 	for _, albumModel := range albumsModel {
-		var album dto.Album
-		dto.TransformAlbum(&albumModel, &album)
-		albums = append(albums, album)
+		albums = append(albums, *albumModel.ToDTOAlbum())
 	}
 	return albums, nil
 }
 
 func (a *albumUsecase) GetAlbumByID(id string) (dto.Album, error) {
-	var album dto.Album
-	albumModel, err := a.album.GetAlbum(id)
+	album, err := a.album.GetAlbum(id)
 	if err != nil {
 		return dto.Album{}, err
 	}
-	dto.TransformAlbum(&albumModel, &album)
-	return album, nil
+	return *album.ToDTOAlbum(), nil
 }
 
 func (a *albumUsecase) AddAlbum(album model.Albums) error {
@@ -60,9 +56,8 @@ func (a *albumUsecase) DeleteAlbum(id string) error {
 }
 
 func (a *albumUsecase) GetAlbumDetail(id string) (dto.AlbumDetail, error) {
-	var album dto.AlbumDetail
 	albumModel, err := a.album.GetAlbum(id)
-	dto.TransformAlbumDetail(&albumModel, &album)
+	album := *albumModel.ToDTOAlbumDetail()
 	album.TotalLike, err = a.albumLike.GetTotalAlbumLikes(id)
 	if err != nil {
 		return dto.AlbumDetail{}, err

@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
 	"music-api-go/usecase"
-	"music-api-go/utilities"
+	"music-api-go/util/uuid"
 	"net/http"
 	"time"
 )
@@ -22,7 +22,7 @@ func NewAlbumLikeController(al usecase.AlbumLikeUsecase) *albumLikeController {
 func (a *albumLikeController) AddAlbumLike(c echo.Context) error {
 	var albumLike model.AlbumLikes
 	c.Bind(&albumLike)
-	albumLike.ID = utilities.CreateUUID()
+	albumLike.ID = uuid.CreateUUID()
 	albumLike.CreatedAt = time.Now().Format(time.RFC1123Z)
 	albumLike.UpdatedAt = albumLike.CreatedAt
 

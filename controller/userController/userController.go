@@ -6,7 +6,8 @@ import (
 	"music-api-go/dto"
 	"music-api-go/model"
 	"music-api-go/usecase"
-	"music-api-go/utilities"
+	"music-api-go/util/middleware"
+	"music-api-go/util/uuid"
 	"net/http"
 	"time"
 )
@@ -37,7 +38,7 @@ func (u *userController) GetUserById(c echo.Context) error {
 func (u *userController) CreateUser(c echo.Context) error {
 	var user model.Users
 	c.Bind(&user)
-	user.ID = utilities.CreateUUID()
+	user.ID = uuid.CreateUUID()
 	user.CreatedAt = time.Now().Format(time.RFC1123Z)
 	user.UpdatedAt = user.CreatedAt
 
@@ -61,7 +62,7 @@ func (u *userController) LoginUser(c echo.Context) error {
 	}
 	fmt.Println(user)
 
-	token, err := utilities.CreateToken(user.Username, user.Email)
+	token, err := middleware.CreateToken(user.Username, user.Email)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

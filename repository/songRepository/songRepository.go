@@ -108,14 +108,13 @@ func (s songRepository) GetSongsByAlbumID(id string) ([]dto.Song, error) {
 	}
 	defer row.Close()
 	for row.Next() {
-		var songDTO dto.Song
 		var song model.Songs
 		err = row.Scan(&song.ID, &song.CreatedAt, &song.UpdatedAt, &song.Title, &song.Year, &song.Performer,
 			&song.Genre, &song.Duration, &song.Album_id)
 		if err != nil {
 			return nil, err
 		}
-		dto.TransformSong(&song, &songDTO)
+		songDTO := *song.ToDTOSong()
 		songs = append(songs, songDTO)
 	}
 	return songs, nil

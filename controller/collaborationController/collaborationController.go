@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
 	"music-api-go/usecase"
-	"music-api-go/utilities"
+	"music-api-go/util/uuid"
 	"net/http"
 	"time"
 )
@@ -22,7 +22,7 @@ func NewCollabRepository(c usecase.CollaborationUsecase) *collabController {
 func (c *collabController) AddCollaboration(e echo.Context) error {
 	var collab model.Collaborations
 	e.Bind(&collab)
-	collab.ID = utilities.CreateUUID()
+	collab.ID = uuid.CreateUUID()
 	collab.CreatedAt = time.Now().Format(time.RFC1123Z)
 	collab.UpdatedAt = collab.CreatedAt
 

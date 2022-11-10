@@ -1,4 +1,4 @@
-package utilities
+package setQuery
 
 import (
 	"strconv"
@@ -10,7 +10,7 @@ func UpdateDynamicQuery(data map[string]interface{}, table, id string) (string, 
 	query := "UPDATE " + table + " SET "
 	i := 1
 	for key, v := range data {
-		if v != "" || v != 0 || v != nil {
+		if v != "" && v != 0 && v != nil {
 			query += strings.ToLower(key) + "=$" + strconv.Itoa(i) + ","
 			value = append(value, v)
 			i++

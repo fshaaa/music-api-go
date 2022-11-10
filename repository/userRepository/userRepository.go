@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/utilities"
+	"music-api-go/util/setQuery"
 )
 
 type UserRepository interface {
@@ -66,7 +66,7 @@ func (u *userRepository) GetUserById(id string) (model.Users, error) {
 }
 
 func (u *userRepository) UpdateUser(id string, req map[string]interface{}) error {
-	query, value := utilities.UpdateDynamicQuery(req, "users", id)
+	query, value := setQuery.UpdateDynamicQuery(req, "users", id)
 	_, err := u.db.Exec(query, value...)
 	if err != nil {
 		return err

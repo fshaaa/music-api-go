@@ -35,12 +35,26 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	songRepo := songRepository.NewSongRepository(db)
 	userRepo := userRepository.NewUserRepository(db)
 
+	albumUc := usecase.NewAlbumUsecase(albumRepo, albumLikeRepo, songRepo)
+	albumlikeUc := usecase.NewAlbumLikeUsecase(albumLikeRepo)
+	collabUc := usecase.NewCollabUsecase(collabRepo)
+	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, collabRepo, songRepo, userRepo)
+	playSongUc := usecase.NewPlaylistSongUsecase(playSongRepo)
+	playActivUc := usecase.PlaylistActivityUsecase(playActiv)
+	songUc := usecase.NewSongUsecase(songRepo, playSongRepo)
 	userUc := usecase.NewUserUsecase(userRepo, collabRepo)
+
+	albumControl := albumController.NewAlbumController(albumUc)
+	albumLikeControl := albumLikeController.NewAlbumLikeController(albumlikeUc)
+	collabControl := collaborationController.NewCollabRepository(collabUc)
+	playlistCotrol := playlistController.NewPlaylistController(playlistUc)
+	playSongControl := playlistSongController.NewPlaylistSongController(playSongUc)
+	playActivControl := playlistActivityController.NewPlaylistActivityController(playActivUc)
+	songControl := songController.NewSongController(songUc)
 	userControl := userController.NewUserController(userUc)
 
-	appUser := e.Group("")
-	appUser.POST("/signup", userControl.CreateUser)
-	appUser.POST("/login", userControl.LoginUser)
+	e.POST("/signup", userControl.CreateUser)
+	e.POST("/login", userControl.LoginUser)
 
 	appUserJWT := e.Group("/users")
 	appUserJWT.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
@@ -48,9 +62,6 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appUserJWT.PUT("/:id", userControl.UpdateUser)
 	appUserJWT.DELETE("/:id", userControl.DeleteUser)
 	appUserJWT.GET("/search", userControl.SearchUser)
-
-	songUc := usecase.NewSongUsecase(songRepo, playSongRepo)
-	songControl := songController.NewSongController(songUc)
 
 	appSong := e.Group("/songs")
 	appSong.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
@@ -61,9 +72,6 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appSong.DELETE("/:id", songControl.DeleteSong)
 	appSong.GET("/search", songControl.SearchSong)
 
-	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, collabRepo, songRepo, userRepo)
-	playlistCotrol := playlistController.NewPlaylistController(playlistUc)
-
 	appPlaylist := e.Group("/playlists")
 	appPlaylist.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appPlaylist.GET("", playlistCotrol.GetAllPlaylists)
@@ -71,9 +79,6 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appPlaylist.GET("/details/:id", playlistCotrol.GetPlaylitsDetail)
 	appPlaylist.POST("", playlistCotrol.AddPlaylist)
 	appPlaylist.DELETE("/:id", playlistCotrol.DeletePlaylist)
-
-	albumUc := usecase.NewAlbumUsecase(albumRepo, albumLikeRepo, songRepo)
-	albumControl := albumController.NewAlbumController(albumUc)
 
 	appAlbum := e.Group("/albums")
 	appAlbum.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
@@ -84,32 +89,20 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appAlbum.POST("", albumControl.AddAlbum)
 	appAlbum.DELETE("", albumControl.DeleteAlbum)
 
-	playSongUc := usecase.NewPlaylistSongUsecase(playSongRepo)
-	playSongControl := playlistSongController.NewPlaylistSongController(playSongUc)
-
 	appPlaylistSong := appPlaylist.Group("/songs")
 	appPlaylistSong.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appPlaylistSong.POST("", playSongControl.AddPlaylistSong)
 	appPlaylistSong.DELETE("", playSongControl.DeletePlaylistSong)
 
-	collabUc := usecase.NewCollabUsecase(collabRepo)
-	collabControl := collaborationController.NewCollabRepository(collabUc)
-
-	appColab := appUser.Group("/collabs")
+	appColab := appPlaylist.Group("/collabs")
 	appColab.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appColab.POST("", collabControl.AddCollaboration)
 	appColab.DELETE("", collabControl.DeleteCollaboration)
-
-	albumlikeUc := usecase.NewAlbumLikeUsecase(albumLikeRepo)
-	albumLikeControl := albumLikeController.NewAlbumLikeController(albumlikeUc)
 
 	appAlbumLike := appAlbum.Group("/like")
 	appAlbumLike.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appAlbumLike.POST("", albumLikeControl.AddAlbumLike)
 	appAlbumLike.DELETE("", albumLikeControl.DeleteAlbumLike)
-
-	playActivUc := usecase.PlaylistActivityUsecase(playActiv)
-	playActivControl := playlistActivityController.NewPlaylistActivityController(playActivUc)
 
 	appPlayActiv := appPlaylist.Group("/status")
 	appPlayActiv.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))

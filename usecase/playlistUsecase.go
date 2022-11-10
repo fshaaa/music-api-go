@@ -47,8 +47,7 @@ func (p *playlistUsecase) GetAllPlaylists() ([]dto.Playlist, error) {
 		return nil, err
 	}
 	for _, playlistModel := range playlistsModel {
-		var playlist dto.Playlist
-		dto.TransformPlaylist(&playlistModel, &playlist)
+		playlist := *playlistModel.ToDTOPlaylists()
 		playlist.TotalSong, err = p.playlistSong.GetTotalSongs(playlist.ID)
 		playlist.TotalDuration, err = p.playlistSong.GetDurationPlaylist(playlist.ID)
 		_, playlist.TotalUserSharing, err = p.collab.GetAllUserID(playlist.ID)
@@ -58,12 +57,11 @@ func (p *playlistUsecase) GetAllPlaylists() ([]dto.Playlist, error) {
 }
 
 func (p *playlistUsecase) GetPlaylistByID(id string) (dto.Playlist, error) {
-	var playlist dto.Playlist
 	playlistModel, err := p.playlist.GetPlaylist(id)
 	if err != nil {
 		return dto.Playlist{}, err
 	}
-	dto.TransformPlaylist(&playlistModel, &playlist)
+	playlist := *playlistModel.ToDTOPlaylists()
 	playlist.TotalSong, err = p.playlistSong.GetTotalSongs(id)
 	playlist.TotalDuration, err = p.playlistSong.GetDurationPlaylist(id)
 	_, playlist.TotalUserSharing, err = p.collab.GetAllUserID(id)
@@ -74,22 +72,19 @@ func (p *playlistUsecase) GetPlaylistByID(id string) (dto.Playlist, error) {
 }
 
 func (p *playlistUsecase) GetPlaylistDetail(id string) (dto.PlaylistDetail, error) {
-	var playlist dto.PlaylistDetail
 	var users_id, songs_id []string
-	var user dto.User
 	playlistModel, err := p.playlist.GetPlaylist(id)
 	if err != nil {
 		return dto.PlaylistDetail{}, err
 	}
-	dto.TransformPlaylistDetail(&playlistModel, &playlist)
+	playlist := *playlistModel.ToDTOPlaylistDetails()
 	owner, err := p.user.GetUserById(playlist.Owner)
-	dto.TransformUser(&owner, &user)
+	user := *owner.ToDTOUser()
 	playlist.User = append(playlist.User, user)
 	songs_id, err = p.playlistSong.GetAllSongID(id)
 	for _, s_id := range songs_id {
-		var song dto.Song
 		songModel, _ := p.song.GetSongById(s_id)
-		dto.TransformSong(&songModel, &song)
+		song := *songModel.ToDTOSong()
 		playlist.Song = append(playlist.Song, song)
 	}
 	playlist.TotalSong, err = p.playlistSong.GetTotalSongs(id)
@@ -97,7 +92,7 @@ func (p *playlistUsecase) GetPlaylistDetail(id string) (dto.PlaylistDetail, erro
 	users_id, playlist.TotalUserSharing, err = p.collab.GetAllUserID(id)
 	for _, u_id := range users_id {
 		userModel, _ := p.user.GetUserById(u_id)
-		dto.TransformUser(&userModel, &user)
+		user = *userModel.ToDTOUser()
 		playlist.User = append(playlist.User, user)
 	}
 	fmt.Println(playlist.Song, playlist.User)

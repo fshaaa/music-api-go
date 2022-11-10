@@ -34,12 +34,11 @@ func (u *userUsecase) GetAllUsersInPlaylist(playlist_id string) ([]dto.User, int
 		return nil, 0, err
 	}
 	for _, id := range user_id {
-		var user dto.User
 		userModel, err := u.user.GetUserById(id)
 		if err != nil {
 			return nil, 0, err
 		}
-		dto.TransformUser(&userModel, &user)
+		user := *userModel.ToDTOUser()
 		users = append(users, user)
 	}
 	return users, total, nil
@@ -50,17 +49,13 @@ func (u *userUsecase) CreateUser(user model.Users) error {
 }
 
 func (u *userUsecase) LoginUser(user model.Users) (dto.User, error) {
-	var DTOuser dto.User
 	userModel, err := u.user.LoginUser(user)
-	dto.TransformUser(&userModel, &DTOuser)
-	return DTOuser, err
+	return *userModel.ToDTOUser(), err
 }
 
 func (u *userUsecase) GetUserById(id string) (dto.User, error) {
-	var DTOuser dto.User
 	userModel, err := u.user.GetUserById(id)
-	dto.TransformUser(&userModel, &DTOuser)
-	return DTOuser, err
+	return *userModel.ToDTOUser(), err
 }
 
 func (u *userUsecase) UpdateUser(id string, user model.Users) (map[string]interface{}, error) {

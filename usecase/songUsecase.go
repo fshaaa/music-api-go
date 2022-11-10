@@ -37,12 +37,11 @@ func (s *songUsecase) GetAllSongsInPlaylist(playlist_id string) ([]dto.Song, int
 		return nil, 0, 0, err
 	}
 	for _, id := range song_id {
-		var song dto.Song
 		songModel, err := s.song.GetSongById(id)
 		if err != nil {
 			return nil, 0, 0, err
 		}
-		dto.TransformSong(&songModel, &song)
+		song := *songModel.ToDTOSong()
 		songs = append(songs, song)
 		totalSong++
 		totalDuration += song.Duration
@@ -58,21 +57,18 @@ func (s *songUsecase) GetAllSongs() ([]dto.Song, error) {
 		return nil, err
 	}
 	for _, songModel := range songsModel {
-		var song dto.Song
-		dto.TransformSong(&songModel, &song)
+		song := *songModel.ToDTOSong()
 		songs = append(songs, song)
 	}
 	return songs, nil
 }
 
 func (s *songUsecase) GetSongByID(id string) (dto.Song, error) {
-	var song dto.Song
 	songModel, err := s.song.GetSongById(id)
 	if err != nil {
 		return dto.Song{}, err
 	}
-	dto.TransformSong(&songModel, &song)
-	return song, nil
+	return *songModel.ToDTOSong(), nil
 }
 
 func (s *songUsecase) AddSong(song model.Songs) error {
@@ -80,7 +76,7 @@ func (s *songUsecase) AddSong(song model.Songs) error {
 }
 
 func (s *songUsecase) UpdateSong(id string, song model.Songs) (map[string]interface{}, error) {
-	var update map[string]interface{}
+	update := make(map[string]interface{})
 	req := map[string]interface{}{
 		"title":     song.Title,
 		"year":      song.Year,
@@ -110,8 +106,7 @@ func (s *songUsecase) SearchSong(title string) ([]dto.Song, error) {
 		return nil, err
 	}
 	for _, songModel := range songsModel {
-		var song dto.Song
-		dto.TransformSong(&songModel, &song)
+		song := *songModel.ToDTOSong()
 		songs = append(songs, song)
 	}
 	return songs, nil
