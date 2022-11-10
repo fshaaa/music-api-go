@@ -2,10 +2,12 @@ package playlistSongsRepository
 
 import (
 	"database/sql"
+	"fmt"
 	"music-api-go/model"
 )
 
 type PlaylistSongsRepository interface {
+	GetTotalSongs(playlist_id string) (int, error)
 	GetAllSongID(playlist_id string) ([]string, error)
 	GetDurationPlaylist(playlist_id string) (int, error)
 	AddSongInPlaylist(playlist model.PlaylistSongs) error
@@ -20,9 +22,26 @@ func NewPlaylistSongsRepository(db *sql.DB) *playlistSongsRepository {
 	return &playlistSongsRepository{db}
 }
 
+func (p *playlistSongsRepository) GetTotalSongs(playlist_id string) (int, error) {
+	query := `SELECT COUNT(id) as total_songs FROM playlist_songs WHERE playlist_id = $1`
+	row, err := p.db.Query(query, playlist_id)
+	if err != nil {
+		return 0, err
+	}
+	var totalSongs = 0
+	defer row.Close()
+	for row.Next() {
+		err = row.Scan(&totalSongs)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return totalSongs, nil
+}
+
 func (p *playlistSongsRepository) GetAllSongID(playlist_id string) ([]string, error) {
 	var song_id []string
-	query := `SELECT song_id FROM playlist_song WHERE playlist_id = $1`
+	query := `SELECT song_id FROM playlist_songs WHERE playlist_id = $1`
 	row, err := p.db.Query(query, playlist_id)
 	if err != nil {
 		return nil, err
@@ -35,19 +54,21 @@ func (p *playlistSongsRepository) GetAllSongID(playlist_id string) ([]string, er
 		}
 		song_id = append(song_id, id)
 	}
+	fmt.Println(song_id)
 	return song_id, nil
 }
 
 func (p *playlistSongsRepository) GetDurationPlaylist(playlist_id string) (int, error) {
-	query := `SELECT SUM(duration) FROM songs s, playlist_songs p WHERE p.playlist_id = $1 AND
+	query := `SELECT SUM(s.duration) as total_time FROM songs s, playlist_songs p WHERE p.playlist_id = $1 AND
 				s.id = p.song_id`
 	row, err := p.db.Query(query, playlist_id)
 	if err != nil {
 		return 0, err
 	}
 	var totalTime = 0
+	defer row.Close()
 	for row.Next() {
-		err = row.Scan(totalTime)
+		err = row.Scan(&totalTime)
 		if err != nil {
 			return 0, err
 		}
@@ -57,8 +78,8 @@ func (p *playlistSongsRepository) GetDurationPlaylist(playlist_id string) (int, 
 
 func (p *playlistSongsRepository) AddSongInPlaylist(playlist model.PlaylistSongs) error {
 	query := `INSERT INTO playlist_songs VALUES ($1,$2,$3,$4,$5)`
-	_, err := p.db.Exec(query, playlist.ID, playlist.CreatedAt, playlist.UpdatedAt, playlist.Song_id,
-		playlist.UpdatedAt)
+	_, err := p.db.Exec(query, playlist.ID, playlist.CreatedAt, playlist.UpdatedAt, playlist.Playlist_id,
+		playlist.Song_id)
 	if err != nil {
 		return err
 	}

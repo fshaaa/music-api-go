@@ -28,9 +28,8 @@ func NewUserUsecase(u userRepository.UserRepository, c collaborationsRepository.
 
 func (u *userUsecase) GetAllUsersInPlaylist(playlist_id string) ([]dto.User, int, error) {
 	var users []dto.User
-	var totalUser = 0
 
-	user_id, err := u.collab.GetAllUserID(playlist_id)
+	user_id, total, err := u.collab.GetAllUserID(playlist_id)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -42,9 +41,8 @@ func (u *userUsecase) GetAllUsersInPlaylist(playlist_id string) ([]dto.User, int
 		}
 		dto.TransformUser(&userModel, &user)
 		users = append(users, user)
-		totalUser++
 	}
-	return users, totalUser, nil
+	return users, total, nil
 }
 
 func (u *userUsecase) CreateUser(user model.Users) error {

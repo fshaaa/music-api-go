@@ -28,7 +28,7 @@ func (p *playlistsRepository) GetAllPlaylists() ([]model.Playlists, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	defer row.Close()
 	for row.Next() {
 		var playlist model.Playlists
 		err = row.Scan(&playlist.ID, &playlist.CreatedAt, &playlist.UpdatedAt, &playlist.Name, &playlist.User_id)
@@ -43,23 +43,26 @@ func (p *playlistsRepository) GetAllPlaylists() ([]model.Playlists, error) {
 
 func (p *playlistsRepository) GetPlaylist(id string) (model.Playlists, error) {
 	var playlist model.Playlists
-	query := `SELECT * FROM playlists WHERE id = ?`
+	query := `SELECT * FROM playlists WHERE id = $1`
 
 	row, err := p.db.Query(query, id)
 	if err != nil {
 		return model.Playlists{}, err
 	}
+	defer row.Close()
 	for row.Next() {
 		err = row.Scan(&playlist.ID, &playlist.CreatedAt, &playlist.UpdatedAt, &playlist.Name,
 			&playlist.User_id)
+		if err != nil {
+			return model.Playlists{}, err
+		}
 	}
-
 	return playlist, nil
 }
 
 func (p *playlistsRepository) AddPlaylist(playlist model.Playlists) error {
 	query := `INSERT INTO playlists VALUES($1,$2,$3,$4,$5)`
-	_, err := p.db.Exec(query, playlist.ID, playlist.CreatedAt, playlist.UpdatedAt, playlist.Name, playlist.ID)
+	_, err := p.db.Exec(query, playlist.ID, playlist.CreatedAt, playlist.UpdatedAt, playlist.Name, playlist.User_id)
 	if err != nil {
 		return err
 	}

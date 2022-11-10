@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
 	"music-api-go/repository/playlistSongsRepository"
@@ -46,6 +47,7 @@ func (s *songUsecase) GetAllSongsInPlaylist(playlist_id string) ([]dto.Song, int
 		totalSong++
 		totalDuration += song.Duration
 	}
+	fmt.Println(songs)
 	return songs, totalSong, totalDuration, nil
 }
 

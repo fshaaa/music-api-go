@@ -86,6 +86,7 @@ func (s *songRepository) SearchSong(title string) ([]model.Songs, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer row.Close()
 	for row.Next() {
 		var song model.Songs
 		err = row.Scan(&song.ID, &song.CreatedAt, &song.UpdatedAt, &song.Title, &song.Year,
@@ -105,6 +106,7 @@ func (s songRepository) GetSongsByAlbumID(id string) ([]dto.Song, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer row.Close()
 	for row.Next() {
 		var songDTO dto.Song
 		var song model.Songs

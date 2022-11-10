@@ -28,7 +28,7 @@ func (a *albumRepository) GetAllAlbums() ([]model.Albums, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	defer row.Close()
 	for row.Next() {
 		var album model.Albums
 		err := row.Scan(&album.ID, &album.CreatedAt, &album.UpdatedAt, &album.Name, &album.Year, &album.Owner)
@@ -48,7 +48,7 @@ func (a *albumRepository) GetAlbum(id string) (model.Albums, error) {
 	if err != nil {
 		return model.Albums{}, err
 	}
-
+	defer row.Close()
 	for row.Next() {
 		err = row.Scan(&album.ID, &album.CreatedAt, &album.UpdatedAt, &album.Name, &album.Year, &album.Owner)
 		if err != nil {

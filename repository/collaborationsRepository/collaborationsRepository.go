@@ -6,7 +6,7 @@ import (
 )
 
 type CollaborationsRepository interface {
-	GetAllUserID(playlist_id string) ([]string, error)
+	GetAllUserID(playlist_id string) ([]string, int, error)
 	AddCollaboration(collab model.Collaborations) error
 	DeleteCollaboration(user_id, playlist_id string) error
 }
@@ -19,22 +19,25 @@ func NewCollaborationRepository(db *sql.DB) *collaborationRepository {
 	return &collaborationRepository{db}
 }
 
-func (c *collaborationRepository) GetAllUserID(playlist_id string) ([]string, error) {
+func (c *collaborationRepository) GetAllUserID(playlist_id string) ([]string, int, error) {
 	var user_id []string
+	var total = 0
 	query := `SELECT user_id FROM collaborations WHERE playlist_id = $1`
 	row, err := c.db.Query(query, playlist_id)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
+	defer row.Close()
 	for row.Next() {
 		var id string
 		err = row.Scan(&id)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		user_id = append(user_id, id)
+		total++
 	}
-	return user_id, nil
+	return user_id, total, nil
 }
 
 func (c *collaborationRepository) AddCollaboration(collab model.Collaborations) error {

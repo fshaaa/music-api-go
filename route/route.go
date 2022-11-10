@@ -61,13 +61,13 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appSong.DELETE("/:id", songControl.DeleteSong)
 	appSong.GET("/search", songControl.SearchSong)
 
-	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, songUc, userUc)
+	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, collabRepo, songRepo, userRepo)
 	playlistCotrol := playlistController.NewPlaylistController(playlistUc)
 
 	appPlaylist := e.Group("/playlists")
 	appPlaylist.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))
 	appPlaylist.GET("", playlistCotrol.GetAllPlaylists)
-	appPlaylist.GET("/:d", playlistCotrol.GetPlaylistById)
+	appPlaylist.GET("/:id", playlistCotrol.GetPlaylistById)
 	appPlaylist.GET("/details/:id", playlistCotrol.GetPlaylitsDetail)
 	appPlaylist.POST("", playlistCotrol.AddPlaylist)
 	appPlaylist.DELETE("/:id", playlistCotrol.DeletePlaylist)
