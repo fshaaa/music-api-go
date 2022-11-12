@@ -1,4 +1,4 @@
-package usecase
+package albumLikeUsecase
 
 import (
 	"music-api-go/model"

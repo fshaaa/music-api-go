@@ -21,7 +21,14 @@ import (
 	"music-api-go/repository/playlistsRepository"
 	"music-api-go/repository/songRepository"
 	"music-api-go/repository/userRepository"
-	"music-api-go/usecase"
+	"music-api-go/usecase/albumLikeUsecase"
+	"music-api-go/usecase/albumUsecase"
+	"music-api-go/usecase/collaborationUsecase"
+	"music-api-go/usecase/playlistActivityUsecase"
+	"music-api-go/usecase/playlistSongUsecase"
+	"music-api-go/usecase/playlistUsecase"
+	"music-api-go/usecase/songUsecase"
+	"music-api-go/usecase/userUsecase"
 )
 
 func NewRoute(e *echo.Echo, db *sql.DB) {
@@ -35,14 +42,14 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	songRepo := songRepository.NewSongRepository(db)
 	userRepo := userRepository.NewUserRepository(db)
 
-	albumUc := usecase.NewAlbumUsecase(albumRepo, albumLikeRepo, songRepo)
-	albumlikeUc := usecase.NewAlbumLikeUsecase(albumLikeRepo)
-	collabUc := usecase.NewCollabUsecase(collabRepo)
-	playlistUc := usecase.NewPlaylistUsecase(playlistRepo, playSongRepo, collabRepo, songRepo, userRepo)
-	playSongUc := usecase.NewPlaylistSongUsecase(playSongRepo)
-	playActivUc := usecase.PlaylistActivityUsecase(playActiv)
-	songUc := usecase.NewSongUsecase(songRepo, playSongRepo)
-	userUc := usecase.NewUserUsecase(userRepo, collabRepo)
+	albumUc := albumUsecase.NewAlbumUsecase(albumRepo, albumLikeRepo, songRepo)
+	albumlikeUc := albumLikeUsecase.NewAlbumLikeUsecase(albumLikeRepo)
+	collabUc := collaborationUsecase.NewCollabUsecase(collabRepo)
+	playlistUc := playlistUsecase.NewPlaylistUsecase(playlistRepo, playSongRepo, collabRepo, songRepo, userRepo)
+	playSongUc := playlistSongUsecase.NewPlaylistSongUsecase(playSongRepo)
+	playActivUc := playlistActivityUsecase.PlaylistActivityUsecase(playActiv)
+	songUc := songUsecase.NewSongUsecase(songRepo, playSongRepo)
+	userUc := userUsecase.NewUserUsecase(userRepo, collabRepo)
 
 	albumControl := albumController.NewAlbumController(albumUc)
 	albumLikeControl := albumLikeController.NewAlbumLikeController(albumlikeUc)

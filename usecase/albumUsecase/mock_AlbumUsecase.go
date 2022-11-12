@@ -1,4 +1,4 @@
-package albumRepository
+package albumUsecase
 
 import (
 	"github.com/stretchr/testify/mock"

@@ -1,4 +1,4 @@
-package usecase
+package collaborationUsecase
 
 import (
 	"music-api-go/model"

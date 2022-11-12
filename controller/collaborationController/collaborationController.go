@@ -3,7 +3,7 @@ package collaborationController
 import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
-	"music-api-go/usecase"
+	"music-api-go/usecase/collaborationUsecase"
 	"music-api-go/util/uuid"
 	"net/http"
 	"time"
@@ -12,10 +12,10 @@ import (
 type CollabController interface{}
 
 type collabController struct {
-	collab usecase.CollaborationUsecase
+	collab collaborationUsecase.CollaborationUsecase
 }
 
-func NewCollabRepository(c usecase.CollaborationUsecase) *collabController {
+func NewCollabRepository(c collaborationUsecase.CollaborationUsecase) *collabController {
 	return &collabController{c}
 }
 

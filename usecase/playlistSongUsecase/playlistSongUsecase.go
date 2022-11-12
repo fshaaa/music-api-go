@@ -1,4 +1,4 @@
-package usecase
+package playlistSongUsecase
 
 import (
 	"music-api-go/model"

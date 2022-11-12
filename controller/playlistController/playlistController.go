@@ -3,7 +3,7 @@ package playlistController
 import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
-	"music-api-go/usecase"
+	"music-api-go/usecase/playlistUsecase"
 	"music-api-go/util/uuid"
 	"net/http"
 	"time"
@@ -12,10 +12,10 @@ import (
 type PlaylistController interface{}
 
 type playlistController struct {
-	playlist usecase.PlaylistUsecase
+	playlist playlistUsecase.PlaylistUsecase
 }
 
-func NewPlaylistController(p usecase.PlaylistUsecase) *playlistController {
+func NewPlaylistController(p playlistUsecase.PlaylistUsecase) *playlistController {
 	return &playlistController{p}
 }
 

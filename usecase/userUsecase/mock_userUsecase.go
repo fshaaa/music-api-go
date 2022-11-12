@@ -1,4 +1,4 @@
-package userRepository
+package userUsecase
 
 import (
 	"github.com/stretchr/testify/mock"

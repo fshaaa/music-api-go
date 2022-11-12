@@ -1,4 +1,4 @@
-package usecase
+package albumUsecase
 
 import (
 	"music-api-go/dto"

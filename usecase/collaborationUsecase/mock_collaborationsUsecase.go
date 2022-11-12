@@ -1,4 +1,4 @@
-package collaborationsRepository
+package collaborationUsecase
 
 import (
 	"github.com/stretchr/testify/mock"

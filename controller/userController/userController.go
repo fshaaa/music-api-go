@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/usecase"
+	"music-api-go/usecase/userUsecase"
 	"music-api-go/util/middleware"
 	"music-api-go/util/uuid"
 	"net/http"
@@ -15,10 +15,10 @@ import (
 type UserController interface{}
 
 type userController struct {
-	user usecase.UserUsecase
+	user userUsecase.UserUsecase
 }
 
-func NewUserController(user usecase.UserUsecase) *userController {
+func NewUserController(user userUsecase.UserUsecase) *userController {
 	return &userController{user}
 }
 

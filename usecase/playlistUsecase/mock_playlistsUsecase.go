@@ -1,4 +1,4 @@
-package playlistsRepository
+package playlistUsecase
 
 import (
 	"github.com/stretchr/testify/mock"

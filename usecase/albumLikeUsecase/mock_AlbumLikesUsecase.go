@@ -1,4 +1,4 @@
-package albumLikesRepository
+package albumLikeUsecase
 
 import (
 	"github.com/stretchr/testify/mock"

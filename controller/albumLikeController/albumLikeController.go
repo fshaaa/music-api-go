@@ -3,7 +3,7 @@ package albumLikeController
 import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/model"
-	"music-api-go/usecase"
+	"music-api-go/usecase/albumLikeUsecase"
 	"music-api-go/util/uuid"
 	"net/http"
 	"time"
@@ -12,10 +12,10 @@ import (
 type AlbumLikeController interface{}
 
 type albumLikeController struct {
-	albumLike usecase.AlbumLikeUsecase
+	albumLike albumLikeUsecase.AlbumLikeUsecase
 }
 
-func NewAlbumLikeController(al usecase.AlbumLikeUsecase) *albumLikeController {
+func NewAlbumLikeController(al albumLikeUsecase.AlbumLikeUsecase) *albumLikeController {
 	return &albumLikeController{al}
 }
 
