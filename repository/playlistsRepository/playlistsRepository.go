@@ -10,6 +10,7 @@ type PlaylistsRepository interface {
 	GetPlaylist(id string) (model.Playlists, error)
 	AddPlaylist(playlist model.Playlists) error
 	DeletePlaylist(id string) error
+	GetPlaylistByUser(user_id string) ([]model.Playlists, error)
 }
 
 type playlistsRepository struct {
@@ -76,4 +77,24 @@ func (p *playlistsRepository) DeletePlaylist(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (p *playlistsRepository) GetPlaylistByUser(user_id string) ([]model.Playlists, error) {
+	var playlists []model.Playlists
+	query := `SELECT * FROM playlists WHERE user_id = $1`
+	row, err := p.db.Query(query, user_id)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+	for row.Next() {
+		var playlist model.Playlists
+		err = row.Scan(&playlist.ID, &playlist.CreatedAt, &playlist.UpdatedAt, &playlist.Name,
+			&playlist.User_id)
+		if err != nil {
+			return nil, err
+		}
+		playlists = append(playlists, playlist)
+	}
+	return playlists, nil
 }

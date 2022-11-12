@@ -81,3 +81,15 @@ func (p *playlistController) DeletePlaylist(c echo.Context) error {
 		"message": "success delete playlist",
 	})
 }
+
+func (p *playlistController) GetPlaylistByUser(c echo.Context) error {
+	id := c.Param("id")
+	playlists, err := p.playlist.GetPlaylistByUser(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, echo.Map{
+		"message":   "success get playlist by user",
+		"playlists": playlists,
+	})
+}

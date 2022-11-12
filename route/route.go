@@ -86,6 +86,7 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	appPlaylist.GET("/details/:id", playlistCotrol.GetPlaylitsDetail)
 	appPlaylist.POST("", playlistCotrol.AddPlaylist)
 	appPlaylist.DELETE("/:id", playlistCotrol.DeletePlaylist)
+	appPlaylist.GET("/users/:id", playlistCotrol.GetPlaylistByUser)
 
 	appAlbum := e.Group("/albums")
 	appAlbum.Use(middleware.JWT([]byte(config.Cfg.TokenSecret)))

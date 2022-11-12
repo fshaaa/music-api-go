@@ -17,6 +17,7 @@ type PlaylistUsecase interface {
 	GetPlaylistByID(id string) (dto.Playlist, error)
 	GetAllPlaylists() ([]dto.Playlist, error)
 	GetPlaylistDetail(id string) (dto.PlaylistDetail, error)
+	GetPlaylistByUser(id string) ([]dto.Playlist, error)
 }
 
 type playlistUsecase struct {
@@ -100,4 +101,16 @@ func (p *playlistUsecase) GetPlaylistDetail(id string) (dto.PlaylistDetail, erro
 		return dto.PlaylistDetail{}, err
 	}
 	return playlist, nil
+}
+
+func (p *playlistUsecase) GetPlaylistByUser(user_id string) ([]dto.Playlist, error) {
+	var playlists []dto.Playlist
+	playlistsModel, err := p.playlist.GetPlaylistByUser(user_id)
+	if err != nil {
+		return nil, err
+	}
+	for _, playlistModel := range playlistsModel {
+		playlists = append(playlists, *playlistModel.ToDTOPlaylists())
+	}
+	return playlists, nil
 }
