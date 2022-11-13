@@ -12,3 +12,8 @@ type UserToken struct {
 	Email    string `json:"email"`
 	Token    string `json:"token"`
 }
+
+func (u User) Error() string {
+	//TODO implement me
+	panic("Error in DTO Users")
+}

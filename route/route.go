@@ -15,12 +15,12 @@ import (
 	"music-api-go/controller/userController"
 	"music-api-go/repository/albumLikesRepository"
 	"music-api-go/repository/albumRepository"
-	"music-api-go/repository/collaborationsRepository"
+	"music-api-go/repository/collab"
 	"music-api-go/repository/playlistActivitiesRepository"
-	"music-api-go/repository/playlistSongsRepository"
-	"music-api-go/repository/playlistsRepository"
-	"music-api-go/repository/songRepository"
-	"music-api-go/repository/userRepository"
+	"music-api-go/repository/playlist_song_repository"
+	"music-api-go/repository/playlists_repository"
+	"music-api-go/repository/song_repository"
+	uRepo "music-api-go/repository/users"
 	"music-api-go/usecase/albumLikeUsecase"
 	"music-api-go/usecase/albumUsecase"
 	"music-api-go/usecase/collaborationUsecase"
@@ -28,19 +28,19 @@ import (
 	"music-api-go/usecase/playlistSongUsecase"
 	"music-api-go/usecase/playlistUsecase"
 	"music-api-go/usecase/songUsecase"
-	"music-api-go/usecase/userUsecase"
+	uUC "music-api-go/usecase/users"
 )
 
 func NewRoute(e *echo.Echo, db *sql.DB) {
 
 	albumLikeRepo := albumLikesRepository.NewAlbumLikesRepository(db)
 	albumRepo := albumRepository.NewAlbumRepository(db)
-	collabRepo := collaborationsRepository.NewCollaborationRepository(db)
-	playlistRepo := playlistsRepository.NewPlaylistRepository(db)
-	playSongRepo := playlistSongsRepository.NewPlaylistSongsRepository(db)
+	collabRepo := collab.NewCollaborationRepository(db)
+	playlistRepo := playlists_repository.NewPlaylistRepository(db)
+	playSongRepo := playlist_song_repository.NewPlaylistSongsRepository(db)
 	playActiv := playlistActivitiesRepository.NewPlaylistActivitiesRepository(db)
-	songRepo := songRepository.NewSongRepository(db)
-	userRepo := userRepository.NewUserRepository(db)
+	songRepo := song_repository.NewSongRepository(db)
+	userRepo := uRepo.NewUserRepository(db)
 
 	albumUc := albumUsecase.NewAlbumUsecase(albumRepo, albumLikeRepo, songRepo)
 	albumlikeUc := albumLikeUsecase.NewAlbumLikeUsecase(albumLikeRepo)
@@ -49,7 +49,7 @@ func NewRoute(e *echo.Echo, db *sql.DB) {
 	playSongUc := playlistSongUsecase.NewPlaylistSongUsecase(playSongRepo)
 	playActivUc := playlistActivityUsecase.PlaylistActivityUsecase(playActiv)
 	songUc := songUsecase.NewSongUsecase(songRepo, playSongRepo)
-	userUc := userUsecase.NewUserUsecase(userRepo, collabRepo)
+	userUc := uUC.NewUserUsecase(userRepo, collabRepo)
 
 	albumControl := albumController.NewAlbumController(albumUc)
 	albumLikeControl := albumLikeController.NewAlbumLikeController(albumlikeUc)

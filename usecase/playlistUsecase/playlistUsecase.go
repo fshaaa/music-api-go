@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/repository/collaborationsRepository"
-	"music-api-go/repository/playlistSongsRepository"
-	"music-api-go/repository/playlistsRepository"
-	"music-api-go/repository/songRepository"
-	"music-api-go/repository/userRepository"
+	"music-api-go/repository/collab"
+	"music-api-go/repository/playlist_song_repository"
+	"music-api-go/repository/playlists_repository"
+	"music-api-go/repository/song_repository"
+	"music-api-go/repository/users"
 )
 
 type PlaylistUsecase interface {
@@ -21,15 +21,15 @@ type PlaylistUsecase interface {
 }
 
 type playlistUsecase struct {
-	playlist     playlistsRepository.PlaylistsRepository
-	playlistSong playlistSongsRepository.PlaylistSongsRepository
-	collab       collaborationsRepository.CollaborationsRepository
-	song         songRepository.SongRepository
-	user         userRepository.UserRepository
+	playlist     playlists_repository.PlaylistsRepository
+	playlistSong playlist_song_repository.PlaylistSongsRepository
+	collab       collab.CollaborationsRepository
+	song         song_repository.SongRepository
+	user         users.UserRepository
 }
 
-func NewPlaylistUsecase(p playlistsRepository.PlaylistsRepository, ps playlistSongsRepository.PlaylistSongsRepository,
-	c collaborationsRepository.CollaborationsRepository, s songRepository.SongRepository, u userRepository.UserRepository) *playlistUsecase {
+func NewPlaylistUsecase(p playlists_repository.PlaylistsRepository, ps playlist_song_repository.PlaylistSongsRepository,
+	c collab.CollaborationsRepository, s song_repository.SongRepository, u users.UserRepository) *playlistUsecase {
 	return &playlistUsecase{p, ps, c, s, u}
 }
 

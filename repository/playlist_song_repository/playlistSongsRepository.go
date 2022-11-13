@@ -1,4 +1,4 @@
-package playlistSongsRepository
+package playlist_song_repository
 
 import (
 	"database/sql"

@@ -90,7 +90,7 @@ func (a *albumController) GetUsersLikeAlbum(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, echo.Map{
-		"message":   "get user like album",
+		"message":   "get users like album",
 		"album":     album.Name,
 		"totalLike": totalLike,
 		"users":     users,

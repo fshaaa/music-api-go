@@ -1,4 +1,4 @@
-package collaborationsRepository
+package collab
 
 import (
 	"database/sql"

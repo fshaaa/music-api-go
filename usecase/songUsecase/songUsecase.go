@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/repository/playlistSongsRepository"
-	"music-api-go/repository/songRepository"
+	"music-api-go/repository/playlist_song_repository"
+	"music-api-go/repository/song_repository"
 )
 
 type SongUsecase interface {
@@ -19,11 +19,11 @@ type SongUsecase interface {
 }
 
 type songUsecase struct {
-	song         songRepository.SongRepository
-	playlistSong playlistSongsRepository.PlaylistSongsRepository
+	song         song_repository.SongRepository
+	playlistSong playlist_song_repository.PlaylistSongsRepository
 }
 
-func NewSongUsecase(song songRepository.SongRepository, playlistSong playlistSongsRepository.PlaylistSongsRepository) *songUsecase {
+func NewSongUsecase(song song_repository.SongRepository, playlistSong playlist_song_repository.PlaylistSongsRepository) *songUsecase {
 	return &songUsecase{song, playlistSong}
 }
 

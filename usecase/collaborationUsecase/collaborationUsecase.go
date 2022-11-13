@@ -2,7 +2,7 @@ package collaborationUsecase
 
 import (
 	"music-api-go/model"
-	"music-api-go/repository/collaborationsRepository"
+	"music-api-go/repository/collab"
 )
 
 type CollaborationUsecase interface {
@@ -11,10 +11,10 @@ type CollaborationUsecase interface {
 }
 
 type collaborationUsecase struct {
-	collab collaborationsRepository.CollaborationsRepository
+	collab collab.CollaborationsRepository
 }
 
-func NewCollabUsecase(c collaborationsRepository.CollaborationsRepository) *collaborationUsecase {
+func NewCollabUsecase(c collab.CollaborationsRepository) *collaborationUsecase {
 	return &collaborationUsecase{c}
 }
 

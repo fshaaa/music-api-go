@@ -16,6 +16,6 @@ type PlaylistDetail struct {
 	TotalSong        int    `json:"total_song"`
 	TotalDuration    int    `json:"total_duration"`
 	TotalUserSharing int    `json:"total_user_sharing"`
-	User             []User `json:"user"`
+	User             []User `json:"users"`
 	Song             []Song `json:"song"`
 }

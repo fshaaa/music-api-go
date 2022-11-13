@@ -1,4 +1,4 @@
-package songRepository
+package song_repository
 
 import (
 	"database/sql"

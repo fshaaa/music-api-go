@@ -89,7 +89,7 @@ func (p *playlistController) GetPlaylistByUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, echo.Map{
-		"message":   "success get playlist by user",
+		"message":   "success get playlist by users",
 		"playlists": playlists,
 	})
 }

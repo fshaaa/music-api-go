@@ -22,7 +22,7 @@ func InitDatabase() {
 	pass := cfg.DB_PASSWORD
 	name := cfg.DB_NAME
 
-	psql := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	psql := fmt.Sprintf("host=%s port=%s users=%s password=%s dbname=%s sslmode=disable",
 		addr, port, user, pass, name)
 
 	db, _ := gorm.Open(postgres.Open(psql), &gorm.Config{
@@ -52,7 +52,7 @@ func InitDatabaseSql() *sql.DB {
 	pass := cfg.DB_PASSWORD
 	name := cfg.DB_NAME
 
-	psql := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	psql := fmt.Sprintf("host=%s port=%s users=%s password=%s dbname=%s sslmode=disable",
 		addr, port, user, pass, name)
 
 	db, err := sql.Open("postgres", psql)

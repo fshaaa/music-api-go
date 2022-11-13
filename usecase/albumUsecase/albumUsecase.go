@@ -5,7 +5,7 @@ import (
 	"music-api-go/model"
 	"music-api-go/repository/albumLikesRepository"
 	"music-api-go/repository/albumRepository"
-	"music-api-go/repository/songRepository"
+	"music-api-go/repository/song_repository"
 )
 
 type AlbumUsecase interface {
@@ -20,10 +20,10 @@ type AlbumUsecase interface {
 type albumUsecase struct {
 	album     albumRepository.AlbumRepository
 	albumLike albumLikesRepository.AlbumLikesRepository
-	song      songRepository.SongRepository
+	song      song_repository.SongRepository
 }
 
-func NewAlbumUsecase(a albumRepository.AlbumRepository, al albumLikesRepository.AlbumLikesRepository, s songRepository.SongRepository) *albumUsecase {
+func NewAlbumUsecase(a albumRepository.AlbumRepository, al albumLikesRepository.AlbumLikesRepository, s song_repository.SongRepository) *albumUsecase {
 	return &albumUsecase{a, al, s}
 }
 

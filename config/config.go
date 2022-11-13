@@ -32,4 +32,5 @@ func InitConfig() {
 
 	_ = viper.Unmarshal(cfg)
 	Cfg = cfg
+	fmt.Println(Cfg)
 }

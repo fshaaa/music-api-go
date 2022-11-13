@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"music-api-go/dto"
 	"music-api-go/model"
-	"music-api-go/usecase/userUsecase"
+	"music-api-go/usecase/users"
 	"music-api-go/util/middleware"
 	"music-api-go/util/uuid"
 	"net/http"
@@ -15,10 +15,10 @@ import (
 type UserController interface{}
 
 type userController struct {
-	user userUsecase.UserUsecase
+	user users.UserUsecase
 }
 
-func NewUserController(user userUsecase.UserUsecase) *userController {
+func NewUserController(user users.UserUsecase) *userController {
 	return &userController{user}
 }
 
@@ -30,8 +30,8 @@ func (u *userController) GetUserById(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "success get user by id",
-		"user":    user,
+		"message": "success get users by id",
+		"users":   user,
 	})
 }
 
@@ -48,7 +48,7 @@ func (u *userController) CreateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "success create user",
+		"message": "success create users",
 	})
 }
 
@@ -74,7 +74,7 @@ func (u *userController) LoginUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "success login",
-		"user":    userRes,
+		"users":   userRes,
 	})
 }
 
@@ -90,8 +90,8 @@ func (u *userController) UpdateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "success update user",
-		"user":    user,
+		"message": "success update users",
+		"users":   user,
 	})
 }
 
@@ -103,7 +103,7 @@ func (u *userController) DeleteUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "success delete user",
+		"message": "success delete users",
 	})
 }
 
@@ -117,7 +117,7 @@ func (u *userController) SearchUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"message": "success search user",
-		"user":    users,
+		"message": "success search users",
+		"users":   users,
 	})
 }

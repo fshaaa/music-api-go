@@ -1,4 +1,4 @@
-package userRepository
+package users
 
 import (
 	"database/sql"
@@ -11,7 +11,7 @@ type UserRepository interface {
 	CreateUser(user model.Users) error
 	LoginUser(user model.Users) (model.Users, error)
 	GetUserById(id string) (model.Users, error)
-	UpdateUser(id string, req map[string]interface{}) error
+	UpdateUser(id string, user model.Users) error
 	DeleteUser(id string) error
 	SearchUser(name string) ([]dto.User, error)
 }
@@ -65,7 +65,19 @@ func (u *userRepository) GetUserById(id string) (model.Users, error) {
 	return userRes, nil
 }
 
-func (u *userRepository) UpdateUser(id string, req map[string]interface{}) error {
+func (u *userRepository) UpdateUser(id string, user model.Users) error {
+	res := make(map[string]interface{})
+	req := map[string]interface{}{
+		"updated_at": user.UpdatedAt,
+		"username":   user.Username,
+		"email":      user.Email,
+		"fullname":   user.Fullname,
+	}
+	for key, value := range req {
+		if value != nil && value != 0 && value != "" {
+			res[key] = value
+		}
+	}
 	query, value := setQuery.UpdateDynamicQuery(req, "users", id)
 	_, err := u.db.Exec(query, value...)
 	if err != nil {

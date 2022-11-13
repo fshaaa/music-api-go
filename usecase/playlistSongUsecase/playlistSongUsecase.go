@@ -2,7 +2,7 @@ package playlistSongUsecase
 
 import (
 	"music-api-go/model"
-	"music-api-go/repository/playlistSongsRepository"
+	"music-api-go/repository/playlist_song_repository"
 )
 
 type PlaylistSongUsecase interface {
@@ -11,10 +11,10 @@ type PlaylistSongUsecase interface {
 }
 
 type playlistSongUsecase struct {
-	playlistSong playlistSongsRepository.PlaylistSongsRepository
+	playlistSong playlist_song_repository.PlaylistSongsRepository
 }
 
-func NewPlaylistSongUsecase(ps playlistSongsRepository.PlaylistSongsRepository) *playlistSongUsecase {
+func NewPlaylistSongUsecase(ps playlist_song_repository.PlaylistSongsRepository) *playlistSongUsecase {
 	return &playlistSongUsecase{ps}
 }
 
