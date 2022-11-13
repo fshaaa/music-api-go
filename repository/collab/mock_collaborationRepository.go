@@ -15,7 +15,7 @@ func NewMockCollabRespository() *MockCollabRepository {
 
 func (m *MockCollabRepository) GetAllUserID(playlist_id string) ([]string, int, error) {
 	ret := m.Called(playlist_id)
-	return ret.Get(0).([]string), ret.Int(1), ret.Error(2)
+	return ret.Get(0).([]string), ret.Get(1).(int), ret.Error(2)
 }
 
 func (m *MockCollabRepository) AddCollaboration(collab model.Collaborations) error {

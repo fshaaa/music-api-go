@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"music-api-go/dto"
 	"music-api-go/model"
 	"music-api-go/repository/collab"
 	"music-api-go/repository/users"
@@ -87,7 +88,6 @@ func TestUpdateUser(t *testing.T) {
 		uid := uuid.NewString()
 
 		mockUser := model.Users{
-			ID:       uid,
 			Username: "fathazhar",
 			Email:    "fathazhar@gmail.com",
 			Fullname: "Fath Azhar",
@@ -97,7 +97,7 @@ func TestUpdateUser(t *testing.T) {
 		mockCollabRepository := new(collab.MockCollabRepository)
 		user := NewUserUsecase(mockUserRepository, mockCollabRepository)
 
-		mockUserRepository.On("UpdateUser", uid, mockUser).Return(*mockUser.ToDTOUser(), nil)
+		mockUserRepository.On("UpdateUser", uid, mockUser).Return(nil)
 
 		users, err := user.UpdateUser(uid, mockUser)
 		assert.NoError(t, err)
@@ -106,28 +106,69 @@ func TestUpdateUser(t *testing.T) {
 	})
 }
 
-//
-//func (m *mockUserUsecase) LoginUser(user model.Users) (dto.User, error) {
-//	ret := m.Called(user)
-//	return ret.Get(0).(dto.User), ret.Error(1)
-//}
-//
-//func (m *mockUserUsecase) GetUserById(id string) (dto.User, error) {
-//	ret := m.Called(id)
-//	return ret.Get(0).(dto.User), ret.Error(1)
-//}
-//
-//func (m *mockUserUsecase) UpdateUser(id string, user model.Users) (map[string]interface{}, error) {
-//	ret := m.Called(id, user)
-//	return ret.Get(0).(map[string]interface{}), ret.Error(1)
-//}
-//
-//func (m *mockUserUsecase) DeleteUser(id string) error {
-//	ret := m.Called(id)
-//	return ret.Error(0)
-//}
-//
-//func (m *mockUserUsecase) SearchUser(name string) ([]dto.User, error) {
-//	ret := m.Called(name)
-//	return ret.Get(0).([]dto.User), ret.Error(1)
-//}
+func TestDeleteUser(t *testing.T) {
+	t.Run("success Delete User", func(t *testing.T) {
+		uid := uuid.NewString()
+
+		mockUserRepository := new(users.MockUserRepository)
+		mockCollabRepository := new(collab.MockCollabRepository)
+		user := NewUserUsecase(mockUserRepository, mockCollabRepository)
+
+		mockUserRepository.On("DeleteUser", uid).Return(nil)
+
+		err := user.DeleteUser(uid)
+		assert.NoError(t, err)
+		mockUserRepository.AssertExpectations(t)
+	})
+}
+
+func TestSearchUser(t *testing.T) {
+	t.Run("success Search User", func(t *testing.T) {
+		var res []dto.User
+
+		mockUser := model.Users{
+			Username: "fathazhar",
+			Email:    "fathazhar@gmail.com",
+			Fullname: "Fath Azhar",
+		}
+
+		mockUserRepository := new(users.MockUserRepository)
+		mockCollabRepository := new(collab.MockCollabRepository)
+		user := NewUserUsecase(mockUserRepository, mockCollabRepository)
+
+		mockUserRepository.On("SearchUser", mock.Anything).Return(res, nil)
+
+		_, err := user.SearchUser(mockUser.Fullname)
+		assert.NoError(t, err)
+		//assert.Error(t, users, res)
+		mockUserRepository.AssertExpectations(t)
+	})
+}
+
+func TestGetAllUsersInPlaylist(t *testing.T) {
+	t.Run("success Get All Users in Playlist", func(t *testing.T) {
+		uid := uuid.NewString()
+		res := model.Users{
+			ID:       uuid.NewString(),
+			Username: "fathazhar",
+			Email:    "fathazhar@gmail.com",
+			Fullname: "Fath Azhar",
+		}
+		total := 1
+		arr := []string{
+			uuid.NewString(),
+		}
+
+		mockUserRepository := new(users.MockUserRepository)
+		mockCollabRepository := new(collab.MockCollabRepository)
+		user := NewUserUsecase(mockUserRepository, mockCollabRepository)
+
+		mockCollabRepository.On("GetAllUserID", uid).Return(arr, total, nil)
+		mockUserRepository.On("GetUserById", mock.Anything).Return(res, nil)
+
+		_, _, err := user.GetAllUsersInPlaylist(uid)
+		assert.NoError(t, err)
+		//assert.Error(t, tot, total)
+		mockUserRepository.AssertExpectations(t)
+	})
+}

@@ -1,7 +1,6 @@
 package playlistUsecase
 
 import (
-	"fmt"
 	"music-api-go/dto"
 	"music-api-go/model"
 	"music-api-go/repository/collab"
@@ -96,7 +95,6 @@ func (p *playlistUsecase) GetPlaylistDetail(id string) (dto.PlaylistDetail, erro
 		user = *userModel.ToDTOUser()
 		playlist.User = append(playlist.User, user)
 	}
-	fmt.Println(playlist.Song, playlist.User)
 	if err != nil {
 		return dto.PlaylistDetail{}, err
 	}

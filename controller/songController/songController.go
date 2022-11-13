@@ -32,7 +32,7 @@ func (s *songController) GetAllSongs(c echo.Context) error {
 
 func (s *songController) GetSongById(c echo.Context) error {
 	id := c.Param("id")
-	song, err := s.song.GetSongByID(id)
+	song, err := s.song.GetSongById(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}

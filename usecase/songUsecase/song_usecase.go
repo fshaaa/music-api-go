@@ -11,7 +11,7 @@ import (
 type SongUsecase interface {
 	GetAllSongsInPlaylist(playlist_id string) ([]dto.Song, int, int, error)
 	GetAllSongs() ([]dto.Song, error)
-	GetSongByID(id string) (dto.Song, error)
+	GetSongById(id string) (dto.Song, error)
 	AddSong(song model.Songs) error
 	UpdateSong(id string, song model.Songs) (map[string]interface{}, error)
 	DeleteSong(id string) error
@@ -63,7 +63,7 @@ func (s *songUsecase) GetAllSongs() ([]dto.Song, error) {
 	return songs, nil
 }
 
-func (s *songUsecase) GetSongByID(id string) (dto.Song, error) {
+func (s *songUsecase) GetSongById(id string) (dto.Song, error) {
 	songModel, err := s.song.GetSongById(id)
 	if err != nil {
 		return dto.Song{}, err
